@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Extractor</title>
+
+  <style>
+    /* Your CSS styles here */
+  </style>
+</head>
+<body>
+  <h1>Movie Extractor</h1>
+  <p>Movie Extractor is a website that allows you to extract movie names from URL links from social platforms like TikTok, Instagram, YouTube, etc. to retrieve the movie name from the search engine.</p>
+
+  <form id="extractForm">
+    <input type="text" name="url" placeholder="Enter URL link">
+    <button type="submit">Extract</button>
+  </form>
+
+  <div class="video-container">
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+
+  <div id="results"></div>
+
+  <script>
+    const form = document.querySelector('#extractForm');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const url = form.url.value;
+
+      const results = document.querySelector('#results');
+      results.innerHTML = '<p>Loading...</p>';
+
+      try {
+        const response = await fetch('/api/extract.php', {  // Updated fetch URL
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await response.json();
+
+        results.innerHTML = '';
+
+        if (data.error) {
+          results.innerHTML = `<p>Error: ${data.error}</p>`;
+        } else {
+          results.innerHTML = `<p>Movie name: ${data.movie_name}</p>`;
+        }
+      } catch (error) {
+        results.innerHTML = `<p>Error: ${error.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
